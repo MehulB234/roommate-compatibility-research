@@ -68,6 +68,12 @@ app.post('/api/compatibility', (req, res) => {
   res.json(result)
 })
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Roommate Compatibility API is running!',
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
 })
