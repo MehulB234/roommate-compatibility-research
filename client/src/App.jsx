@@ -1,121 +1,149 @@
+
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const defaultRoommate = {
+  name: '',
+  budget: '',
+  cleanliness: 'Moderate',
+  sleepSchedule: 'Night Owl',
+  smoking: 'No',
+  pets: 'No',
+}
+
+function RoommateForm({ title, roommate, onChange }) {
+  function updateField(field, value) {
+    onChange({ ...roommate, [field]: value })
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <div className="roommate-card">
+      <h2>{title}</h2>
+
+      <label>
+        Name
+        <input
+          type="text"
+          placeholder="Enter name"
+          value={roommate.name}
+          onChange={(e) => updateField('name', e.target.value)}
+        />
+      </label>
+
+      <label>
+        Monthly Housing Budget ($)
+        <input
+          type="number"
+          min="0"
+          placeholder="e.g. 800"
+          value={roommate.budget}
+          onChange={(e) => updateField('budget', e.target.value)}
+        />
+      </label>
+
+      <label>
+        Cleanliness
+        <select
+          value={roommate.cleanliness}
+          onChange={(e) => updateField('cleanliness', e.target.value)}
         >
-          Count is {count}
+          <option>Very Clean</option>
+          <option>Moderate</option>
+          <option>Relaxed</option>
+        </select>
+      </label>
+
+      <label>
+        Sleep Schedule
+        <select
+          value={roommate.sleepSchedule}
+          onChange={(e) => updateField('sleepSchedule', e.target.value)}
+        >
+          <option>Early Bird</option>
+          <option>Night Owl</option>
+          <option>Flexible</option>
+        </select>
+      </label>
+
+      <label>
+        Smoking
+        <select
+          value={roommate.smoking}
+          onChange={(e) => updateField('smoking', e.target.value)}
+        >
+          <option>No</option>
+          <option>Yes</option>
+        </select>
+      </label>
+
+      <label>
+        Pets
+        <select
+          value={roommate.pets}
+          onChange={(e) => updateField('pets', e.target.value)}
+        >
+          <option>No</option>
+          <option>Yes</option>
+        </select>
+      </label>
+    </div>
+  )
+}
+
+function App() {
+  const [roommate1, setRoommate1] = useState({ ...defaultRoommate })
+  const [roommate2, setRoommate2] = useState({ ...defaultRoommate })
+
+  function handleSubmit(e) {
+    e.preventDefault()
+
+    if (!roommate1.name.trim() || !roommate2.name.trim()) {
+      alert('Please enter both roommate names.')
+      return
+    }
+
+    if (
+      roommate1.budget === '' ||
+      roommate2.budget === '' ||
+      Number(roommate1.budget) <= 0 ||
+      Number(roommate2.budget) <= 0
+    ) {
+      alert('Please enter valid housing budgets for both roommates.')
+      return
+    }
+
+    alert('Profiles submitted! Compatibility calculation coming next.')
+  }
+
+  return (
+    <div className="app-container">
+      <header className="app-header">
+        <h1>Roommate Compatibility Calculator</h1>
+        <p>
+          Compare two roommates based on their lifestyle and housing preferences.
+        </p>
+      </header>
+
+      <form onSubmit={handleSubmit}>
+        <div className="roommate-grid">
+          <RoommateForm
+            title="Roommate 1"
+            roommate={roommate1}
+            onChange={setRoommate1}
+          />
+
+          <RoommateForm
+            title="Roommate 2"
+            roommate={roommate2}
+            onChange={setRoommate2}
+          />
+        </div>
+
+        <button className="calculate-button" type="submit">
+          Calculate Compatibility
         </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      </form>
+    </div>
   )
 }
 
