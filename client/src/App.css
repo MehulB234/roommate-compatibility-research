@@ -145,7 +145,7 @@
   margin-top: 30px;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0, 0.05);
   text-align: center;
 }
 
@@ -189,52 +189,76 @@
   margin: 24px 0;
 }
 
-/* Match Breakdown */
+.match-count {
+  font-size: 16px;
+  color: #64748b;
+  margin-bottom: 30px;
+}
 
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+/* Detailed Compatibility Breakdown */
+
+.breakdown-heading {
+  color: #1e293b;
   text-align: left;
-  margin-top: 30px;
+  margin-top: 35px;
+  margin-bottom: 18px;
 }
 
-.matches,
-.differences {
-  padding: 20px;
-  border-radius: 10px;
+.table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.matches {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
 }
 
-.differences {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+.breakdown-table th {
+  background: #f1f5f9;
+  color: #334155;
+  padding: 14px;
+  font-weight: 700;
+  border-bottom: 2px solid #cbd5e1;
 }
 
-.matches h3 {
+.breakdown-table td {
+  padding: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.breakdown-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.status-match {
+  display: inline-block;
+  background: #dcfce7;
   color: #166534;
-  margin-top: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
-.differences h3 {
+.status-partial {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status-different {
+  display: inline-block;
+  background: #fee2e2;
   color: #991b1b;
-  margin-top: 0;
-}
-
-.matches ul,
-.differences ul {
-  padding-left: 22px;
-  margin-bottom: 0;
-}
-
-.matches li,
-.differences li {
-  margin-bottom: 10px;
-  line-height: 1.5;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
 .result-note {
@@ -274,10 +298,6 @@
     padding: 20px;
   }
 
-  .results-grid {
-    grid-template-columns: 1fr;
-  }
-
   .button-group {
     flex-direction: column;
   }
@@ -293,5 +313,9 @@
 
   .result-card {
     padding: 24px 18px;
+  }
+
+  .breakdown-table {
+    min-width: 580px;
   }
 }

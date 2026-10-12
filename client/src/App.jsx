@@ -9,7 +9,60 @@ const defaultRoommate = {
   sleepSchedule: 'Night Owl',
   smoking: 'No',
   pets: 'No',
+  studyHabits: 'Quiet',
+  guests: 'Occasionally',
+  noiseLevel: 'Moderate',
+  temperature: 'Moderate',
+  sharing: 'Ask First',
 }
+
+const preferenceFields = [
+  {
+    key: 'cleanliness',
+    label: 'Cleanliness',
+    options: ['Very Clean', 'Moderate', 'Relaxed'],
+  },
+  {
+    key: 'sleepSchedule',
+    label: 'Sleep Schedule',
+    options: ['Early Bird', 'Night Owl', 'Flexible'],
+  },
+  {
+    key: 'smoking',
+    label: 'Smoking',
+    options: ['No', 'Yes'],
+  },
+  {
+    key: 'pets',
+    label: 'Pets',
+    options: ['No', 'Yes'],
+  },
+  {
+    key: 'studyHabits',
+    label: 'Study Habits',
+    options: ['Quiet', 'Background Noise', 'Flexible'],
+  },
+  {
+    key: 'guests',
+    label: 'Guest Frequency',
+    options: ['Rarely', 'Occasionally', 'Frequently'],
+  },
+  {
+    key: 'noiseLevel',
+    label: 'Noise Level',
+    options: ['Quiet', 'Moderate', 'Loud'],
+  },
+  {
+    key: 'temperature',
+    label: 'Room Temperature',
+    options: ['Cool', 'Moderate', 'Warm'],
+  },
+  {
+    key: 'sharing',
+    label: 'Sharing Household Items',
+    options: ['Yes', 'Ask First', 'No'],
+  },
+]
 
 function RoommateForm({ title, roommate, onChange }) {
   function updateField(field, value) {
@@ -41,51 +94,23 @@ function RoommateForm({ title, roommate, onChange }) {
         />
       </label>
 
-      <label>
-        Cleanliness
-        <select
-          value={roommate.cleanliness}
-          onChange={(e) => updateField('cleanliness', e.target.value)}
-        >
-          <option>Very Clean</option>
-          <option>Moderate</option>
-          <option>Relaxed</option>
-        </select>
-      </label>
-
-      <label>
-        Sleep Schedule
-        <select
-          value={roommate.sleepSchedule}
-          onChange={(e) => updateField('sleepSchedule', e.target.value)}
-        >
-          <option>Early Bird</option>
-          <option>Night Owl</option>
-          <option>Flexible</option>
-        </select>
-      </label>
-
-      <label>
-        Smoking
-        <select
-          value={roommate.smoking}
-          onChange={(e) => updateField('smoking', e.target.value)}
-        >
-          <option>No</option>
-          <option>Yes</option>
-        </select>
-      </label>
-
-      <label>
-        Pets
-        <select
-          value={roommate.pets}
-          onChange={(e) => updateField('pets', e.target.value)}
-        >
-          <option>No</option>
-          <option>Yes</option>
-        </select>
-      </label>
+      {preferenceFields.map((field) => (
+        <label key={field.key}>
+          {field.label}
+          <select
+            value={roommate[field.key]}
+            onChange={(e) =>
+              updateField(field.key, e.target.value)
+            }
+          >
+            {field.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
+      ))}
     </div>
   )
 }
@@ -122,7 +147,7 @@ function App() {
       Number(roommate1.budget) <= 0 ||
       Number(roommate2.budget) <= 0
     ) {
-      setError('Please enter valid housing budgets for both roommates.')
+      setError('Please enter valid housing budgets.')
       return
     }
 
@@ -136,26 +161,19 @@ function App() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            roommate1,
-            roommate2,
-          }),
+          body: JSON.stringify({ roommate1, roommate2 }),
         }
       )
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(
-          data.error || 'Failed to calculate compatibility.'
-        )
+        throw new Error(data.error || 'Calculation failed.')
       }
 
       setResult(data)
     } catch (err) {
-      setError(
-        err.message || 'Unable to connect to the backend server.'
-      )
+      setError(err.message || 'Unable to connect to the server.')
     } finally {
       setLoading(false)
     }
@@ -265,44 +283,56 @@ function App() {
                   : 'Low Compatibility'}
           </p>
 
-          <div className="results-grid">
-            <div className="matches">
-              <h3>Matching Preferences</h3>
+          <p className="match-count">
+            {result.matchedCategories} out of{' '}
+            {result.totalCategories} categories received full points
+          </p>
 
-              {result.matches.length > 0 ? (
-                <ul>
-                  {result.matches.map((match) => (
-                    <li key={match}>
-                      {match}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No matching preferences.</p>
-              )}
-            </div>
+          <h3 className="breakdown-heading">
+            Detailed Compatibility Breakdown
+          </h3>
 
-            <div className="differences">
-              <h3>Different Preferences</h3>
+          <div className="table-container">
+            <table className="breakdown-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>{result.roommateNames[0]}</th>
+                  <th>{result.roommateNames[1]}</th>
+                  <th>Points Earned</th>
+                </tr>
+              </thead>
 
-              {result.differences.length > 0 ? (
-                <ul>
-                  {result.differences.map((difference) => (
-                    <li key={difference}>
-                      {difference}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No differences found!</p>
-              )}
-            </div>
+              <tbody>
+                {result.breakdown.map((item) => (
+                  <tr key={item.category}>
+                    <td>{item.category}</td>
+                    <td>{item.roommate1}</td>
+                    <td>{item.roommate2}</td>
+                    <td>
+                      <span
+                        className={
+                          item.points === item.maxPoints
+                            ? 'status-match'
+                            : item.points > 0
+                              ? 'status-partial'
+                              : 'status-different'
+                        }
+                      >
+                        {item.points} / {item.maxPoints}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <p className="result-note">
-            Compatibility is estimated using five equally
-            weighted preference categories. Results are
-            intended for demonstration purposes.
+            Compatibility is calculated using a weighted
+            100-point system. More important categories
+            contribute more points, and similar preferences
+            can receive partial credit.
           </p>
         </section>
       )}
